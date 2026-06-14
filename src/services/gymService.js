@@ -16,15 +16,17 @@ export async function fetchGyms({ lat, lon, radiusM = 5000 }) {
   if (!res.ok) throw new Error(`Gym-Suche fehlgeschlagen (${res.status})`)
   const data = await res.json()
 
-  return (data.elements || []).map((el) => {
-    const lat = el.lat ?? el.center?.lat
-    const lon = el.lon ?? el.center?.lon
-    return {
-      id: `${el.type}/${el.id}`,
-      name: el.tags?.name || 'Fitnessstudio',
-      lat,
-      lon,
-      tags: el.tags || {},
-    }
-  })
+  return (data.elements || [])
+    .map((el) => {
+      const lat = el.lat ?? el.center?.lat
+      const lon = el.lon ?? el.center?.lon
+      return {
+        id: `${el.type}/${el.id}`,
+        name: el.tags?.name || 'Fitnessstudio',
+        lat,
+        lon,
+        tags: el.tags || {},
+      }
+    })
+    .filter((gym) => gym.lat != null && gym.lon != null)
 }

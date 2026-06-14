@@ -20,4 +20,14 @@ describe('geocodeAddress', () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => [] })))
     await expect(geocodeAddress('asdfqwer')).rejects.toThrow(/nichts gefunden|not found/i)
   })
+
+  it('wirft Geocoding-Fehler bei API-Fehlerobjekt', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ error: 'Unable to geocode' }) })))
+    await expect(geocodeAddress('xyz')).rejects.toThrow(/Geocoding-Fehler/)
+  })
+
+  it('wirft Fehler bei HTTP-Fehlerstatus', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 500 })))
+    await expect(geocodeAddress('Berlin')).rejects.toThrow(/500/)
+  })
 })

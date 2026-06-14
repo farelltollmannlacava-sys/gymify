@@ -31,4 +31,22 @@ describe('fetchGyms', () => {
     const gyms = await fetchGyms({ lat: 52.5, lon: 13.4, radiusM: 5000 })
     expect(gyms[2].name).toBe('Fitnessstudio')
   })
+
+  it('filtert Elemente ohne Koordinaten heraus', async () => {
+    const resp = {
+      elements: [
+        { type: 'node', id: 1, lat: 52.5, lon: 13.4, tags: { name: 'OK Gym' } },
+        { type: 'way', id: 2, tags: { name: 'Kaputt (kein center)' } }, // keine Koordinaten
+      ],
+    }
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => resp })))
+    const gyms = await fetchGyms({ lat: 52.5, lon: 13.4, radiusM: 5000 })
+    expect(gyms).toHaveLength(1)
+    expect(gyms[0].id).toBe('node/1')
+  })
+
+  it('wirft Fehler bei HTTP-Fehlerstatus', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 502 })))
+    await expect(fetchGyms({ lat: 52.5, lon: 13.4, radiusM: 5000 })).rejects.toThrow(/502/)
+  })
 })

@@ -6,7 +6,14 @@ export async function geocodeAddress(query) {
   const res = await fetch(url, { headers: { 'Accept-Language': 'de' } })
   if (!res.ok) throw new Error(`Geocoding fehlgeschlagen (${res.status})`)
   const data = await res.json()
+  if (!Array.isArray(data)) {
+    throw new Error(`Geocoding-Fehler: ${data.error ?? 'unerwartete API-Antwort'}`)
+  }
   if (!data.length) throw new Error('Adresse nicht gefunden (nichts gefunden)')
   const { lat, lon, display_name } = data[0]
-  return { lat: parseFloat(lat), lon: parseFloat(lon), label: display_name }
+  const result = { lat: parseFloat(lat), lon: parseFloat(lon), label: display_name }
+  if (Number.isNaN(result.lat) || Number.isNaN(result.lon)) {
+    throw new Error('Ungültige Koordinaten aus Geocoder')
+  }
+  return result
 }
