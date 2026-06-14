@@ -35,4 +35,11 @@ describe('matchGyms', () => {
     const res = matchGyms([gymB, gymA], { selectedFeatures: [], freetext: '', origin })
     expect(res[0].id).toBe('a') // gleiche Passung (0), aber näher
   })
+
+  it('sortiert Gyms ohne Koordinaten ans Ende', () => {
+    const noCoords = { id: 'x', name: 'X', features: [] }
+    const res = matchGyms([noCoords, gymA], { selectedFeatures: [], freetext: '', origin })
+    expect(res[res.length - 1].id).toBe('x')
+    expect(res[res.length - 1].distanceKm).toBe(Infinity)
+  })
 })

@@ -34,7 +34,7 @@ function pickSome(arr, n, rand) {
 }
 
 export function enrichGym(rawGym) {
-  const seed = hashString(rawGym.id)
+  const seed = hashString(String(rawGym.id ?? rawGym.name ?? 'gym'))
   const rand = mulberry32(seed)
 
   const price = 15 + Math.floor(rand() * 46) // 15–60
@@ -48,14 +48,13 @@ export function enrichGym(rawGym) {
   const features = pickSome(FEATURES, featureCount, rand)
 
   const reviewN = 2 + Math.floor(rand() * 2) // 2–3 Bewertungen
-  const reviews = []
-  for (let i = 0; i < reviewN; i++) {
-    reviews.push({
-      author: REVIEW_AUTHORS[Math.floor(rand() * REVIEW_AUTHORS.length)],
-      rating: 3 + Math.floor(rand() * 3), // 3–5
-      text: REVIEW_TEXTS[Math.floor(rand() * REVIEW_TEXTS.length)],
-    })
-  }
+  const reviewAuthors = pickSome(REVIEW_AUTHORS, reviewN, rand)
+  const reviewTexts = pickSome(REVIEW_TEXTS, reviewN, rand)
+  const reviews = reviewAuthors.map((author, i) => ({
+    author,
+    rating: 3 + Math.floor(rand() * 3), // 3–5
+    text: reviewTexts[i],
+  }))
 
   return { ...rawGym, price, rating, reviewCount, photos, features, reviews }
 }

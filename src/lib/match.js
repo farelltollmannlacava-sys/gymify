@@ -7,9 +7,10 @@ export function matchGyms(gyms, { selectedFeatures = [], freetext = '', origin }
   const wanted = new Set([...selectedFeatures, ...parseFreetext(freetext)])
 
   const ranked = gyms.map((g) => {
-    const distanceKm = origin
-      ? haversineKm(origin.lat, origin.lon, g.lat, g.lon)
-      : 0
+    const distanceKm =
+      origin && g.lat != null && g.lon != null
+        ? haversineKm(origin.lat, origin.lon, g.lat, g.lon)
+        : Infinity
     const matchedFeatures = (g.features || []).filter((f) => wanted.has(f))
     return { ...g, distanceKm, matchedFeatures, matchScore: matchedFeatures.length }
   })

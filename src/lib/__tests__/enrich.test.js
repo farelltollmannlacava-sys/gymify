@@ -36,4 +36,18 @@ describe('enrichGym', () => {
     expect(g.name).toBe('Test Gym')
     expect(g.lat).toBe(52.5)
   })
+
+  it('crasht nicht bei fehlender id und bleibt deterministisch', () => {
+    const noId = { name: 'Ohne ID', lat: 52.5, lon: 13.4, tags: {} }
+    const a = enrichGym({ ...noId })
+    const b = enrichGym({ ...noId })
+    expect(a).toEqual(b)
+    expect(a.price).toBeGreaterThanOrEqual(15)
+  })
+
+  it('liefert Bewertungen ohne doppelte Autoren', () => {
+    const g = enrichGym({ id: 'node/999', name: 'G', lat: 1, lon: 2, tags: {} })
+    const authors = g.reviews.map((r) => r.author)
+    expect(new Set(authors).size).toBe(authors.length)
+  })
 })
