@@ -29,6 +29,7 @@ export default function App() {
     } catch (e) {
       setError(e.message)
       setEnriched([])
+      setOrigin(null)
     } finally {
       setLoading(false)
     }
@@ -65,15 +66,7 @@ export default function App() {
       {error && <p style={{ color: 'var(--rose)' }}>{error}</p>}
 
       {origin && !loading && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 16,
-            marginTop: 20,
-            alignItems: 'start',
-          }}
-        >
+        <div className="results-grid">
           <GymList gyms={ranked} onSelect={setSelectedGym} />
           <div style={{ height: 520, position: 'sticky', top: 16 }}>
             <GymMap origin={origin} gyms={ranked} onSelect={setSelectedGym} />

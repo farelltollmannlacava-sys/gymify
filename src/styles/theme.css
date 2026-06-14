@@ -45,3 +45,17 @@ button {
   border: 1px solid rgba(176, 146, 90, 0.18);
   border-radius: var(--radius);
 }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}

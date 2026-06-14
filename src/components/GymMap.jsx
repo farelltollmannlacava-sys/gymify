@@ -3,12 +3,15 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 L.Icon.Default.mergeOptions({ iconUrl: markerIcon, shadowUrl: markerShadow })
 
+import { useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 
 // Zentriert die Karte neu, wenn sich der Ursprung ändert.
 function Recenter({ center }) {
   const map = useMap()
-  map.setView(center, map.getZoom())
+  useEffect(() => {
+    map.setView(center, map.getZoom())
+  }, [center[0], center[1]])
   return null
 }
 
